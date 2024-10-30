@@ -221,6 +221,54 @@
   <ItemGroup>
     <None Include="Resources\Thelaoi.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trash_24px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\add_24px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\settings_32px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\login_rounded_26px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading_32px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\search_30px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\left_2_50px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\debt_24px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\daudo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nenThuVien.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nenTV.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nguoidungnen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\theloaiNen.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nenTL.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\userLogin.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\thuthuNen.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -90,6 +90,12 @@ namespace GUI
             dgvTacGia.DataSource = tacGiaList; // Chỉ hiển thị các cột đã chỉ định
         }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabel1.Text = string.Format("Hôm nay là ngày {0} - Bây giờ là {1}",
+    DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("hh:mm:ss tt"));
+        }
+
         private void btn_Them_Click(object sender, EventArgs e)
         {
             try

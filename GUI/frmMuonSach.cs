@@ -142,6 +142,13 @@ namespace GUI
         {
             try
             {
+                // Kiểm tra ngày trả dự kiến phải lớn hơn hoặc bằng ngày mượn
+                if (dtpNgayTraDuKien.Value < dtpNgayMuon.Value)
+                {
+                    MessageBox.Show("Ngày trả dự kiến không được nhỏ hơn ngày mượn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return; // Ngăn không cho tiếp tục thêm mượn sách
+                }
+
                 MuonSach muonSach = new MuonSach()
                 {
                     MaNguoiMuon = (int)cmbMaNguoiMuon.SelectedValue,
@@ -152,7 +159,13 @@ namespace GUI
                     PhiPhat = decimal.Parse(txtPhiPhat.Text)
                 };
 
+                // Thêm thông tin mượn sách
                 muonSachBLL.AddMuonSach(muonSach);
+
+                // Giảm số lượng sách đi 1
+                SachBLL sachBLL = new SachBLL();
+                sachBLL.UpdateQuantity(muonSach.MaSach, -1);
+
                 ReloadData();
                 MessageBox.Show("Thêm mượn sách thành công.");
             }
@@ -166,6 +179,13 @@ namespace GUI
         {
             try
             {
+                // Kiểm tra ngày trả dự kiến phải lớn hơn hoặc bằng ngày mượn
+                if (dtpNgayTraDuKien.Value < dtpNgayMuon.Value)
+                {
+                    MessageBox.Show("Ngày trả dự kiến không được nhỏ hơn ngày mượn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return; // Ngăn không cho tiếp tục cập nhật mượn sách
+                }
+
                 int maMuonSach = int.Parse(txtMaMuonSach.Text);
                 MuonSach muonSach = new MuonSach()
                 {
@@ -178,6 +198,14 @@ namespace GUI
                     PhiPhat = decimal.Parse(txtPhiPhat.Text)
                 };
 
+                // Kiểm tra trạng thái mới là "Đã trả"
+                if (muonSach.TrangThai == "Đã trả")
+                {
+                    SachBLL sachBLL = new SachBLL();
+                    sachBLL.UpdateQuantity(muonSach.MaSach, 1); // Tăng số lượng sách lên 1
+                }
+
+                // Cập nhật thông tin mượn sách
                 muonSachBLL.UpdateMuonSach(muonSach);
                 ReloadData();
                 MessageBox.Show("Cập nhật mượn sách thành công.");
@@ -190,24 +218,34 @@ namespace GUI
 
         private void btn_Xoa_Click(object sender, EventArgs e)
         {
-            try
+            if (dgvMuonSach.SelectedRows.Count > 0)
             {
-                int maMuonSach = int.Parse(txtMaMuonSach.Text);
+                int maMuonSach = Convert.ToInt32(dgvMuonSach.SelectedRows[0].Cells["MaMuonSach"].Value);
 
-                var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa phiếu mượn sách này?",
+                // Hiển thị hộp thoại xác nhận trước khi xóa
+                var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa bản ghi mượn sách này?",
                                                      "Xác nhận xóa",
-                                                     MessageBoxButtons.YesNo);
+                                                     MessageBoxButtons.YesNo,
+                                                     MessageBoxIcon.Warning);
 
                 if (confirmResult == DialogResult.Yes)
                 {
+                    // Kiểm tra xem sách có đang được mượn hay không
+                    if (muonSachBLL.IsBookCurrentlyBorrowed(maMuonSach))
+                    {
+                        MessageBox.Show("Không thể xóa bản ghi mượn sách khi sách đang được mượn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Thực hiện xóa nếu sách không đang được mượn
                     muonSachBLL.DeleteMuonSach(maMuonSach);
                     ReloadData();
-                    MessageBox.Show("Xóa mượn sách thành công.");
+                    MessageBox.Show("Xóa bản ghi mượn sách thành công.");
                 }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Lỗi khi xóa mượn sách: " + ex.Message);
+                MessageBox.Show("Vui lòng chọn bản ghi mượn sách để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -215,8 +253,10 @@ namespace GUI
         {
             try
             {
+                string searchText = txtMaNguoiMuon.Text.Trim();
+
                 var muonSachList = muonSachBLL.GetAllMuonSach()
-                                              .Where(ms => ms.NguoiMuon.HoTen.Contains(txtMaNguoiMuon.Text))
+                                              .Where(ms => ms.NguoiMuon.HoTen.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                                               .Select(ms => new
                                               {
                                                   ms.MaMuonSach,
@@ -277,6 +317,12 @@ namespace GUI
         {
             ReloadData();
             MessageBox.Show("Dữ liệu đã được tải lại.");
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabel1.Text = string.Format("Hôm nay là ngày {0} - Bây giờ là {1}",
+    DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("hh:mm:ss tt"));
         }
 
         private void quảnLíThểLoạiToolStripMenuItem_Click(object sender, EventArgs e)

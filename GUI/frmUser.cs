@@ -101,13 +101,27 @@ namespace GUI
             cmb_Sach.ValueMember = "MaSach";    // Lưu mã sách
         }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabel1.Text = string.Format("Hôm nay là ngày {0} - Bây giờ là {1}",
+    DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("hh:mm:ss tt"));
+        }
+
         private void btnMuonSach_Click(object sender, EventArgs e)
         {
             try
             {
-                int maSach = (int)cmb_Sach.SelectedValue;  // Lấy mã sách từ ComboBox
                 DateTime ngayMuon = dtp_NgayMuon.Value;    // Lấy ngày mượn
                 DateTime ngayTraDuKien = dtpk_NgayTraDuKien.Value; // Lấy ngày trả dự kiến
+
+                // Kiểm tra ngày trả dự kiến phải lớn hơn hoặc bằng ngày mượn
+                if (ngayTraDuKien < ngayMuon)
+                {
+                    MessageBox.Show("Ngày trả dự kiến không được nhỏ hơn ngày mượn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return; // Dừng lại, không tiếp tục nếu ngày trả dự kiến không hợp lệ
+                }
+
+                int maSach = (int)cmb_Sach.SelectedValue;  // Lấy mã sách từ ComboBox
 
                 MuonSach muonSach = new MuonSach
                 {
@@ -119,9 +133,15 @@ namespace GUI
                     PhiPhat = 0 // Mặc định phí phạt bằng 0
                 };
 
-                muonSachBLL.AddMuonSach(muonSach);  // Gọi phương thức AddMuonSach
+                // Thêm thông tin mượn sách
+                muonSachBLL.AddMuonSach(muonSach);
+
+                // Giảm số lượng sách đi 1
+                sachBLL.UpdateQuantity(maSach, -1);
+
                 MessageBox.Show("Mượn sách thành công!", "Thông báo");
                 LoadData(); // Tải lại dữ liệu sau khi mượn sách
+                LoadSach(); // Tải lại danh sách sách để cập nhật số lượng
             }
             catch (Exception ex)
             {

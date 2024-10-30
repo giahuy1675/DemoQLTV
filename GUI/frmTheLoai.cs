@@ -106,6 +106,12 @@ namespace GUI
             }
         }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabel1.Text = string.Format("Hôm nay là ngày {0} - Bây giờ là {1}",
+    DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("hh:mm:ss tt"));
+        }
+
         private void btn_Sua_Click(object sender, EventArgs e)
         {
             try
@@ -154,8 +160,10 @@ namespace GUI
         {
             try
             {
+                string searchText = txtTenTheLoai.Text.Trim().ToLower(); // Lấy chuỗi tìm kiếm và chuyển thành chữ thường
+
                 var theLoaiList = theLoaiBLL.GetAllTheLoai()
-                                            .Where(tl => tl.TenTheLoai.Contains(txtTenTheLoai.Text)) // Tìm kiếm theo tên thể loại
+                                            .Where(tl => tl.TenTheLoai.ToLower().Contains(searchText)) // Chuyển thành chữ thường trước khi tìm kiếm
                                             .Select(tl => new
                                             {
                                                 tl.MaTheLoai,

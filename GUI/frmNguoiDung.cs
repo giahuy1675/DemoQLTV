@@ -104,6 +104,17 @@ namespace GUI
             MessageBox.Show("Dữ liệu đã được tải lại."); // Thông báo khi hoàn tất
         }
 
+        private void cmbTinhTrangTaiKhoan_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabel1.Text = string.Format("Hôm nay là ngày {0} - Bây giờ là {1}",
+    DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("hh:mm:ss tt"));
+        }
+
         private void LoadTinhTrangTaiKhoan()
         {
             // Thêm các trạng thái tài khoản vào ComboBox

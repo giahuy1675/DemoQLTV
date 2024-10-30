@@ -1,4 +1,5 @@
 ﻿using DAL; // Tham chiếu đến lớp DAL
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -50,6 +51,21 @@ namespace BLL
                 sachToUpdate.NamXuatBan = sach.NamXuatBan;
                 sachToUpdate.SoLuong = sach.SoLuong;
                 sachToUpdate.MoTa = sach.MoTa;
+                dbContext.SaveChanges();
+            }
+        }
+        // Phương thức cập nhật số lượng sách
+        public void UpdateQuantity(int maSach, int quantityChange)
+        {
+            var sachToUpdate = dbContext.Sach.Find(maSach);
+            if (sachToUpdate != null)
+            {
+                // Cập nhật số lượng sách, đảm bảo số lượng không âm
+                int newQuantity = (int)(sachToUpdate.SoLuong + quantityChange);
+
+                // Đảm bảo số lượng không nhỏ hơn 0
+                sachToUpdate.SoLuong = (sbyte)Math.Max(0, newQuantity);
+
                 dbContext.SaveChanges();
             }
         }
